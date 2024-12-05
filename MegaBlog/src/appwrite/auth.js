@@ -1,5 +1,5 @@
 import conf from '../conf/conf.js'
-import { Client, Account, ID} from 'appwrite';
+import { Client, Account, ID} from "appwrite";
 
 export class AuthService {
     client = new Client();
@@ -9,10 +9,11 @@ export class AuthService {
         this.client
             .setEndpoint(conf.appwriteUrl)
             .setProject(conf.appwriteProjectId);
-        this.account = new Account(this.client)
+        this.account = new Account(this.client);
     }
 
     async createAccount({email, password, name}) {
+        // eslint-disable-next-line no-useless-catch
         try{
             const userAccount = await this.account.create(ID.unique(),email, password, name);
             if(userAccount)
@@ -23,26 +24,28 @@ export class AuthService {
             else{
                 return userAccount;
             }
-        } catch (error){
-            throw error;
-        }
-    }
-
-    async login({email, password}){
-        try{
-            await this.account.createEmailSession(email,password);
-        }
+        } 
         catch (error){
             throw error;
         }
     }
+
+    async login({email, password}) {
+        // eslint-disable-next-line no-useless-catch
+        try {
+            return await this.account.createEmailPasswordSession(email, password);
+        } catch (error) {
+            throw error;
+        }
+    }
+
 
     async getCurrentUser(){
         try{
             return await this.account.get();
         }
         catch(error){
-            console.log(error);
+            console.log("Appwrite serive :: getCurrentUser :: error", error);
         }
 
         return null;
@@ -52,7 +55,7 @@ export class AuthService {
         try{
             return await this.account.deleteSessions();
         }catch (error){
-            console.log(error);
+            console.log("Appwrite serive :: logout :: error", error);
         }
     }
 
